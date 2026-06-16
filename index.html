@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة الثانوية العلمية</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght=400;500;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Tajawal',sans-serif}
+:root{--burg:#800020;--gold:#b8975e;--bg:#faf8f6;--card:#fff;--border:#e8e2dc;--text:#3a2e2b;--light:#7a6a65}
+body{background:var(--bg);color:var(--text);padding:16px;min-height:100vh}
+.container{max-width:700px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header h1{font-size:1.6rem;color:var(--burg);font-weight:800}
+.header p{font-size:.85rem;color:var(--light);margin-top:4px}
+.screen{display:none}.screen.active{display:block}
+.welcome-box{background:var(--card);border-radius:20px;border:1px solid var(--border);padding:2rem;text-align:center;margin-bottom:16px}
+.welcome-icon{font-size:56px;margin-bottom:12px}
+.welcome-box h2{font-size:1.4rem;color:var(--burg);margin-bottom:8px}
+.welcome-box p{color:var(--light);font-size:.9rem;line-height:1.7;margin-bottom:20px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.info-item{background:#fdf6ee;border:1px solid #f0e4d0;border-radius:12px;padding:12px;text-align:center}
+.info-item .num{font-size:1.4rem;font-weight:800;color:var(--burg)}
+.info-item .lbl{font-size:.78rem;color:var(--light)}
+.start-btn{width:100%;padding:14px;background:var(--burg);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;transition:opacity .2s}
+.start-btn:hover{opacity:.88}
+.section-title{font-size:.8rem;color:var(--light);font-weight:600;margin-bottom:10px;padding-right:4px;letter-spacing:.5px}
+.subject-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.subject-name{font-size:.95rem;font-weight:700;color:var(--burg);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.subject-name .weight{font-size:.75rem;background:#fdf0e8;color:var(--gold);border:1px solid #f0dcc0;padding:2px 8px;border-radius:99px;font-weight:600}
+.inputs-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.input-group label{display:block;font-size:.78rem;color:var(--light);margin-bottom:4px}
+.input-group input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:1rem;font-family:'Tajawal',sans-serif;color:var(--text);background:#fafafa;transition:border .2s}
+.input-group input:focus{outline:none;border-color:var(--burg);background:#fff}
+.input-group .max{font-size:.72rem;color:#bbb;margin-top:3px}
+.calc-btn{width:100%;padding:15px;background:var(--burg);color:#fff;border:none;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:16px;transition:opacity .2s}
+.calc-btn:hover{opacity:.88}
+.result-hero{background:linear-gradient(135deg,var(--burg),#a0002a);border-radius:20px;padding:2rem;text-align:center;color:#fff;margin-bottom:16px}
+.result-hero.fail-bg{background:linear-gradient(135deg, #7f8c8d, #34495e);}
+.result-hero .pct{font-size:4rem;font-weight:800;line-height:1}
+.result-hero .pct span{font-size:1.8rem}
+.result-hero .total{font-size:1rem;opacity:.85;margin-top:6px}
+.result-hero .grade-label{display:inline-block;background:rgba(255,255,255,.2);border-radius:99px;padding:4px 16px;font-size:.9rem;margin-top:10px}
+.results-table{background:var(--card);border-radius:16px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.rt-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;background:#fdf6f0;padding:10px 14px;font-size:.78rem;color:var(--light);font-weight:600}
+.rt-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:11px 14px;border-top:1px solid var(--border);font-size:.85rem;align-items:center}
+.rt-row:hover{background:#fafafa}
+.rt-row .subj{font-weight:600;color:var(--text)}
+.rt-row .score{color:var(--burg);font-weight:700}
+.back-btn{width:100%;padding:13px;background:transparent;color:var(--burg);border:2px solid var(--burg);border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:8px}
+.note-box{background:#fff8ee;border:1px solid #f0dcc0;border-radius:12px;padding:12px 14px;font-size:.82rem;color:#7a5a2b;line-height:1.7;margin-bottom:16px}
+.note-box strong{color:var(--burg)}
+.error-msg{color:#c0392b;font-size:.82rem;text-align:center;padding:8px;display:none}
+.error-msg.show{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🎓 حاسبة الثانوية العلمية</h1>
+    <p>العام الدراسي 2025 - 2026</p>
+  </div>
+
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-box">
+      <div class="welcome-icon">📊</div>
+      <h2>احسب نسبتك بدقة</h2>
+      <p>أدخل درجات أعمال السنة ودرجات الامتحان النهائي لكل مادة، وسيحسب لك المجموع والنسبة المئوية تلقائياً وفقاً للمنظومة الليبية.</p>
+      <div class="info-grid">
+        <div class="info-item"><div class="num">30%</div><div class="lbl">أعمال السنة</div></div>
+        <div class="info-item"><div class="num">70%</div><div class="lbl">الامتحان النهائي</div></div>
+        <div class="info-item"><div class="num">1400</div><div class="lbl">المجموع الكلي</div></div>
+        <div class="info-item"><div class="num">50%</div><div class="lbl">شرط نجاح النهائي</div></div>
+      </div>
+      <button class="start-btn" onclick="showScreen('screen-form')">ابدأ الحساب ←</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-form">
+    <div class="section-title">📝 أدخل درجاتك في كل مادة</div>
+    <div id="subjects-form"></div>
+    <div class="error-msg" id="errorMsg">⚠️ يرجى ملء جميع الحقول بأرقام صحيحة ولا تتجاوز النهاية العظمى</div>
+    <button class="calc-btn" onclick="calculate()">احسب نسبتي 🎯</button>
+  </div>
+
+  <div class="screen" id="screen-result">
+    <div class="result-hero" id="resultHero"></div>
+    <div class="note-box" id="noteBox"></div>
+    <div class="results-table">
+      <div class="rt-head">
+        <div>المادة</div>
+        <div>أعمال السنة</div>
+        <div>النهائي</div>
+        <div>المجموع</div>
+      </div>
+      <div id="resultsRows"></div>
+      <div class="rt-row" style="background:#fdf6f0;font-weight:700">
+        <div style="color:var(--burg)">المجموع الكلي</div>
+        <div id="totalA" style="color:var(--burg)"></div>
+        <div id="totalE" style="color:var(--burg)"></div>
+        <div id="totalS" style="color:var(--burg)"></div>
+      </div>
+    </div>
+    <button class="back-btn" onclick="showScreen('screen-form')">← تعديل الدرجات</button>
+    <button class="back-btn" style="margin-top:8px;border-color:#ccc;color:#999" onclick="showScreen('screen-welcome')">بداية جديدة</button>
+  </div>
+</div>
+
+<script>
+const subjects = [
+  { name:"التربية الإسلامية", a:24, e:56,  total:80  },
+  { name:"اللغة العربية",     a:36, e:84,  total:120 },
+  { name:"اللغة الإنجليزية", a:36, e:84,  total:120 },
+  { name:"الرياضيات",         a:48, e:112, total:160 },
+  { name:"الفيزياء",          a:48, e:112, total:160 },
+  { name:"الميكانيكا",        a:36, e:84,  total:120 },
+  { name:"الكيمياء",          a:48, e:112, total:160 },
+  { name:"الأحياء",           a:48, e:112, total:160 },
+  { name:"الإحصاء",           a:24, e:56,  total:80  },
+  { name:"تقنية المعلومات",   a:36, e:84,  total:120 }
+];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function buildForm() {
+  const container = document.getElementById('subjects-form');
+  container.innerHTML = '';
+  subjects.forEach((s, i) => {
+    const weight = ((s.total / 1400) * 100).toFixed(1);
+    container.innerHTML += `
+      <div class="subject-card">
+        <div class="subject-name">
+          ${s.name}
+          <span class="weight">${weight}% من المجموع</span>
+        </div>
+        <div class="inputs-row">
+          <div class="input-group">
+            <label>أعمال السنة</label>
+            <input type="number" id="a_${i}" min="0" max="${s.a}" placeholder="0">
+            <div class="max">من ${s.a}</div>
+          </div>
+          <div class="input-group">
+            <label>الامتحان النهائي</label>
+            <input type="number" id="e_${i}" min="0" max="${s.e}" placeholder="0">
+            <div class="max">من ${s.e}</div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function calculate() {
+  const errEl = document.getElementById('errorMsg');
+  let valid = true;
+  let totalA = 0, totalE = 0, totalS = 0;
+  let failed = [], rows = '';
+
+  const results = subjects.map((s, i) => {
+    const aVal = parseFloat(document.getElementById('a_' + i).value) || 0;
+    const eVal = parseFloat(document.getElementById('e_' + i).value) || 0;
+    
+    // التحقق من صحة المدخلات بشكل صارم
+    if (aVal < 0 || eVal < 0 || aVal > s.a || eVal > s.e || document.getElementById('a_' + i).value === '' || document.getElementById('e_' + i).value === '') {
+      valid = false;
+    }
+    return { s, aVal, eVal };
+  });
+
+  if (!valid) { errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+
+  results.forEach(({ s, aVal, eVal }) => {
+    const subTotal = aVal + eVal;
+    totalA += aVal; totalE += eVal; totalS += subTotal;
+    if (eVal < s.e * 0.5) failed.push(s.name);
+    rows += `
+      <div class="rt-row">
+        <div class="subj">${s.name}</div>
+        <div class="score">${aVal}/${s.a}</div>
+        <div class="score">${eVal}/${s.e}</div>
+        <div class="score">${subTotal}/${s.total}</div>
+      </div>`;
+  });
+
+  const percentage = ((totalS / 1400) * 100).toFixed(2);
+  let grade = getGrade(percentage);
+  
+  const heroEl = document.getElementById('resultHero');
+  if (failed.length > 0) {
+    grade = { label: 'راسب / دور ثاني ⚠️', msg: 'لم تحقق النسبة المطلوبة في نهاية ورقة الامتحان لبعض المواد.' };
+    heroEl.classList.add('fail-bg');
+  } else {
+    heroEl.classList.remove('fail-bg');
+  }
+
+  document.getElementById('resultsRows').innerHTML = rows;
+  document.getElementById('totalA').textContent = totalA;
+  document.getElementById('totalE').textContent = totalE;
+  document.getElementById('totalS').textContent = totalS + ' / 1400';
+  heroEl.innerHTML = `
+    <div style="font-size:.9rem;opacity:.8;margin-bottom:8px">نسبتك النهائية</div>
+    <div class="pct">${percentage}<span>%</span></div>
+    <div class="total">المجموع: ${totalS} من 1400</div>
+    <div class="grade-label">${grade.label}</div>`;
+    
+  document.getElementById('noteBox').innerHTML = failed.length > 0
+    ? `<strong>⚠️ تنبيه رسوب:</strong> لم تحقق الحد الأدنى (50%) في الامتحان النهائي للمواد التالية:<br>${failed.map(f => '• ' + f).join('<br>')}`
+    : `<strong>✅ مبروك!</strong> حققت الحد الأدنى المطلوب في جميع المواد وجزت بنجاح. ${grade.msg}`;
+
+  showScreen('screen-result');
+}
+
+function getGrade(pct) {
+  pct = parseFloat(pct);
+  if (pct >= 85) return { label:'ممتاز 🌟', msg:'نتيجة رائعة، أنت في القمة!' };
+  if (pct >= 75) return { label:'جيد جداً ✨', msg:'نتيجة متميزة، أحسنت!' };
+  if (pct >= 65) return { label:'جيد 👍', msg:'نتيجة جيدة، واصل التميز!' };
+  if (pct >= 50) return { label:'مقبول 📑', msg:'اجتزت بنجاح، يمكنك تحسين النتيجة.' };
+  return { label:'راسب 🛑', msg:'لم تحقق الحد الأدنى للنجاح.' };
+}
+
+buildForm();
+</script>
+</body>
+</html>
